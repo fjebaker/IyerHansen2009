@@ -8,8 +8,12 @@ using ArbNumerics
 𝒞(ω₀, s) = 1 + s * √(1 - ω₀)
 
 # alias around elliptical integrals
-Π(n, k) = elliptic_pi(ArbFloat(n), ArbFloat(k))
-Π(n, ϕ, k) = elliptic_pi(ArbFloat(n), ArbFloat(ϕ), ArbFloat(k))
+function Π(n::T, k::T)::T where {T}
+    T(elliptic_pi(ArbFloat(n), ArbFloat(k)))
+end
+function Π(n::T, ϕ::T, k::T)::T where {T} 
+    T(elliptic_pi(ArbFloat(n), ArbFloat(ϕ), ArbFloat(k)))
+end
 
 """
     r₀(b, a, M, s)
@@ -73,6 +77,10 @@ end
 n₊(h, hsc, ω₀) = n₊₋(h, hsc, ω₀, 1)
 n₋(h, hsc, ω₀) = n₊₋(h, hsc, ω₀, -1)
 
+# impact parameter limits for the shadow
+b₊₋(M, a, s) = -a + s * 6M * cos((1/3) * acos(-s * a / M))
+b₊(M, a) = b₊₋(M, a, 1)
+b₋(M, a) = b₊₋(M, a, -1)
 
 """
     deflection_angle(M, a, b)
@@ -84,6 +92,15 @@ at impact parameter `b`.
 Uses Eq. (34) to compute the semi-analytic result using elliptical integrals.
 """
 function deflection_angle(M, a, b)
+    # make sure impact parameter does not correspond
+    # to geodesic that falls into the event horizon
+    if (b₋(M, a) ≤ b ≤ b₊(M, a))
+        return NaN
+    end
+    _deflection_angle(M, a, b)
+end
+
+function _deflection_angle(M, a, b)
     r0 = r₀(abs(b), a, M, sign(b))
 
     ωs = a / b
@@ -98,7 +115,7 @@ function deflection_angle(M, a, b)
     nn = n₋(h, hsc, ω₀)
 
     t1 = Ω₊(h, hsc, ω₀, ωs) * (Π(np, k2) - Π(np, ϕ, k2))
-    t1 = Ω₋(h, hsc, ω₀, ωs) * (Π(nn, k2) - Π(nn, ϕ, k2))
+    t2 = Ω₋(h, hsc, ω₀, ωs) * (Π(nn, k2) - Π(nn, ϕ, k2))
 
     -π + (4 / (1 - ωs)) * √(r₀_Q(h, hsc)) * (t1 + t2)
 end
