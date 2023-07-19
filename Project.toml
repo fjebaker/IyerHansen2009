@@ -1,0 +1,7 @@
+name = "IyerHansen2009"
+uuid = "6dbec4dd-1c77-466f-be49-4bb8b7bc4e69"
+authors = ["fjebaker <fergusbkr@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+ArbNumerics = "7e558dbc-694d-5a72-987c-6f4ebed21442"
