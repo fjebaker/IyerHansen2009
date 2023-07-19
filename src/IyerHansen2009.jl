@@ -11,7 +11,7 @@ using ArbNumerics
 function Π(n::T, k::T)::T where {T}
     T(elliptic_pi(ArbFloat(n), ArbFloat(k)))
 end
-function Π(n::T, ϕ::T, k::T)::T where {T} 
+function Π(n::T, ϕ::T, k::T)::T where {T}
     T(elliptic_pi(ArbFloat(n), ArbFloat(ϕ), ArbFloat(k)))
 end
 
@@ -78,7 +78,7 @@ n₊(h, hsc, ω₀) = n₊₋(h, hsc, ω₀, 1)
 n₋(h, hsc, ω₀) = n₊₋(h, hsc, ω₀, -1)
 
 # impact parameter limits for the shadow
-b₊₋(M, a, s) = -a + s * 6M * cos((1/3) * acos(-s * a / M))
+b₊₋(M, a, s) = -a + s * 6M * cos((1 / 3) * acos(-s * a / M))
 b₊(M, a) = b₊₋(M, a, 1)
 b₋(M, a) = b₊₋(M, a, -1)
 
